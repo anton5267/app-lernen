@@ -7,6 +7,7 @@ Production-ready full-stack app for movie and TV discovery with real-data search
 - Web app (GitHub Pages): `https://anton5267.github.io/app-lernen/`
 - Repository: `https://github.com/anton5267/app-lernen`
 - Issues: `https://github.com/anton5267/app-lernen/issues`
+- One-click backend deploy (Render): `https://render.com/deploy?repo=https://github.com/anton5267/app-lernen`
 
 ## Community
 
@@ -33,6 +34,7 @@ Production-ready full-stack app for movie and TV discovery with real-data search
 - `docs/ARCHITECTURE.md`: backend/frontend module map and extension pattern
 - `docs/ONE_LINK_DEPLOY_CHECKLIST.md`: single-link deploy flow
 - `docs/RELEASE_POST_TEMPLATE_UA.md`: release post template
+- `docs/DEPLOY_RENDER_BACKEND.md`: permanent backend domain setup
 
 ## Quick start
 
@@ -171,6 +173,17 @@ This uses backend endpoint `POST /api/auth/demo` and unlocks favorites/upload fo
 Note: Free ngrok may show a warning page first; click continue once.  
 For Google OAuth on this public URL, add the ngrok domain to `Authorized JavaScript origins`.
 On Windows, `npm run web:export` includes a safe wrapper for a known `expo export` post-build `EPERM` process error.
+
+## Permanent Backend Domain (Render)
+
+If you want stable production URL (instead of ngrok), use Render blueprint:
+
+1. Deploy: `https://render.com/deploy?repo=https://github.com/anton5267/app-lernen`
+2. Add required API keys in Render
+3. Set GitHub variable `EXPO_PUBLIC_API_BASE_URL` to your Render backend URL
+4. Re-run `Deploy GitHub Pages` workflow
+
+Full guide: [docs/DEPLOY_RENDER_BACKEND.md](./docs/DEPLOY_RENDER_BACKEND.md)
 
 ## GitHub Pages (frontend link like `github.io/<repo>/`)
 

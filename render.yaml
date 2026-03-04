@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: movie-finder-backend
+    env: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_ORIGIN
+        value: https://anton5267.github.io
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATA_DIR
+        value: /var/data
+      - key: UPLOADS_DIR
+        value: /var/data/uploads
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TMDB_API_KEY
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: TWITCH_CLIENT_ID
+        sync: false
+      - key: TWITCH_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: ADMIN_EMAILS
+        sync: false
+      - key: WATCH_REGION
+        value: UA
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: RATE_LIMIT_MAX
+        value: "600"
+      - key: AUTH_RATE_LIMIT_MAX
+        value: "30"
+      - key: UPLOAD_RATE_LIMIT_MAX
+        value: "20"
+      - key: SHARE_CREATE_RATE_LIMIT_MAX
+        value: "60"
+    disk:
+      name: movie-finder-data
+      mountPath: /var/data
+      sizeGB: 1
