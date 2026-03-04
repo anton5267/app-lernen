@@ -51,6 +51,8 @@ npm run typecheck
 npm run test
 ```
 
+GitHub Pages deployment is automated via `.github/workflows/pages.yml` (push to `master/main`).
+
 ## Environment
 
 Create `.env` in `my-app-2`:
@@ -62,6 +64,11 @@ EXPO_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
 
 If `EXPO_PUBLIC_API_BASE_URL` is not set, web uses `window.location.origin`.
 If it is set to `http://localhost:4000` but the app runs on a public host (for example ngrok), it auto-switches to the current origin.
+
+For GitHub Pages (`https://anton5267.github.io/app-lernen/`) set repository variables:
+
+- `EXPO_PUBLIC_API_BASE_URL`
+- `EXPO_PUBLIC_GOOGLE_CLIENT_ID`
 
 Search UX modes:
 

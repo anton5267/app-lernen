@@ -9,27 +9,27 @@ function mockResponse(payload: unknown, status = 200) {
 }
 
 describe('apiFetch', () => {
-  const originalFetch = global.fetch;
+  const originalFetch = globalThis.fetch;
 
   beforeEach(() => {
-    global.fetch = jest.fn();
+    globalThis.fetch = jest.fn() as unknown as typeof fetch;
   });
 
   afterAll(() => {
-    global.fetch = originalFetch;
+    globalThis.fetch = originalFetch;
   });
 
   it('returns parsed payload for successful response', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce(mockResponse({ ok: true }, 200));
+    (globalThis.fetch as unknown as jest.Mock).mockResolvedValueOnce(mockResponse({ ok: true }, 200));
 
     const result = await apiFetch<{ ok: boolean }>('/api/health');
 
     expect(result).toEqual({ ok: true });
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(globalThis.fetch as unknown as jest.Mock).toHaveBeenCalledTimes(1);
   });
 
   it('returns undefined for 204 response', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (globalThis.fetch as unknown as jest.Mock).mockResolvedValueOnce({
       ok: true,
       status: 204,
       json: jest.fn(),
@@ -41,13 +41,15 @@ describe('apiFetch', () => {
   });
 
   it('uses backend error message when present', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce(mockResponse({ error: 'Custom backend error' }, 400));
+    (globalThis.fetch as unknown as jest.Mock).mockResolvedValueOnce(
+      mockResponse({ error: 'Custom backend error' }, 400)
+    );
 
     await expect(apiFetch('/api/favorites')).rejects.toThrow('Custom backend error');
   });
 
   it('falls back to HTTP status when backend payload is not json', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (globalThis.fetch as unknown as jest.Mock).mockResolvedValueOnce({
       ok: false,
       status: 503,
       json: jest.fn().mockRejectedValue(new Error('invalid json')),
@@ -57,7 +59,7 @@ describe('apiFetch', () => {
   });
 
   it('returns friendly message for network failures', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new TypeError('Network request failed'));
+    (globalThis.fetch as unknown as jest.Mock).mockRejectedValueOnce(new TypeError('Network request failed'));
 
     await expect(apiFetch('/api/favorites', { retryAttempts: 0 })).rejects.toThrow(
       'Не вдалося підключитися до сервера'
@@ -67,7 +69,7 @@ describe('apiFetch', () => {
   it('rethrows abort errors unchanged', async () => {
     const abortError = new Error('Aborted');
     abortError.name = 'AbortError';
-    (global.fetch as jest.Mock).mockRejectedValueOnce(abortError);
+    (globalThis.fetch as unknown as jest.Mock).mockRejectedValueOnce(abortError);
 
     await expect(apiFetch('/api/favorites')).rejects.toMatchObject({
       name: 'AbortError',
@@ -75,7 +77,7 @@ describe('apiFetch', () => {
   });
 
   it('returns timeout message when request exceeds timeout', async () => {
-    (global.fetch as jest.Mock).mockImplementationOnce((_url: string, init?: RequestInit) => {
+    (globalThis.fetch as unknown as jest.Mock).mockImplementationOnce((_url: string, init?: RequestInit) => {
       return new Promise((_resolve, reject) => {
         const rejectAbort = () => {
           const abortError = new Error('Aborted');
@@ -98,29 +100,29 @@ describe('apiFetch', () => {
   });
 
   it('retries GET requests once on network error and succeeds', async () => {
-    (global.fetch as jest.Mock)
+    (globalThis.fetch as unknown as jest.Mock)
       .mockRejectedValueOnce(new TypeError('Network request failed'))
       .mockResolvedValueOnce(mockResponse({ ok: true }, 200));
 
     const result = await apiFetch<{ ok: boolean }>('/api/health', { retryDelayMs: 0 });
 
     expect(result).toEqual({ ok: true });
-    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(globalThis.fetch as unknown as jest.Mock).toHaveBeenCalledTimes(2);
   });
 
   it('retries GET requests on retryable HTTP status and succeeds', async () => {
-    (global.fetch as jest.Mock)
+    (globalThis.fetch as unknown as jest.Mock)
       .mockResolvedValueOnce(mockResponse({ error: 'Temporary unavailable' }, 503))
       .mockResolvedValueOnce(mockResponse({ ok: true }, 200));
 
     const result = await apiFetch<{ ok: boolean }>('/api/health', { retryDelayMs: 0 });
 
     expect(result).toEqual({ ok: true });
-    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(globalThis.fetch as unknown as jest.Mock).toHaveBeenCalledTimes(2);
   });
 
   it('does not retry non-GET requests by default', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new TypeError('Network request failed'));
+    (globalThis.fetch as unknown as jest.Mock).mockRejectedValueOnce(new TypeError('Network request failed'));
 
     await expect(
       apiFetch('/api/favorites', {
@@ -129,6 +131,6 @@ describe('apiFetch', () => {
       })
     ).rejects.toThrow('Не вдалося підключитися до сервера');
 
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(globalThis.fetch as unknown as jest.Mock).toHaveBeenCalledTimes(1);
   });
 });

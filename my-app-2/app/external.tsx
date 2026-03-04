@@ -90,7 +90,7 @@ export default function ExternalPlayerScreen() {
   const helperText = !hasPlayableTarget
     ? 'Не знайдено ID або назву каналу для відтворення. Поверніться до пошуку і відкрийте результат повторно.'
     : webViewUnsupported
-      ? 'Вбудований плеєр у web-версії недоступний. Натисніть «Відкрити оригінал», щоб дивитися напряму на YouTube/Twitch.'
+      ? 'Плеєр недоступний у web-версії. Скористайтесь кнопкою «Відкрити оригінал», щоб перейти напряму на YouTube або Twitch.'
       : 'Якщо вбудований плеєр не завантажився, натисніть «Перезапустити плеєр» або відкрийте оригінал.';
 
   const handleReloadPlayer = useCallback(() => {
@@ -153,7 +153,7 @@ export default function ExternalPlayerScreen() {
                 <Ionicons name="information-circle-outline" size={22} color={palette.info} />
                 <Text style={[styles.invalidTargetTitle, { color: palette.textMain }]}>Плеєр недоступний у web</Text>
                 <Text style={[styles.invalidTargetText, { color: palette.textMuted }]}>
-                  У web-режимі React Native WebView не підтримується. Натисніть кнопку «Відкрити оригінал».
+                  Вбудоване відтворення на цій платформі недоступне. Натисніть кнопку «Відкрити оригінал».
                 </Text>
                 <ActionButton
                   compact

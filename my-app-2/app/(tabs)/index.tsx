@@ -1017,7 +1017,7 @@ export default function SearchScreen() {
           ]}>
         <Text style={[styles.headerTitle, isPhone && styles.headerTitlePhone, { color: palette.textMain }]}>Movie Finder</Text>
         <Text style={[styles.headerText, { color: palette.textMuted }]}>
-          Пошук фільмів, серіалів, YouTube і Twitch через backend proxy
+          Пошук фільмів і серіалів + відео з YouTube/Twitch через backend proxy
         </Text>
 
         <ThemeModePicker

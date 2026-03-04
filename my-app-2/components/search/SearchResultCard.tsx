@@ -79,14 +79,24 @@ function SearchResultCardComponent({
         {hasPoster ? (
           <ExpoImage
             source={{ uri: item.poster! }}
-            style={[styles.poster, isExternal && styles.posterExternal]}
+            style={[
+              styles.poster,
+              isExternal && styles.posterExternal,
+              isExternal && layoutMode === 'single' && styles.posterExternalSingle,
+            ]}
             contentFit="cover"
             cachePolicy="memory-disk"
             transition={140}
             onError={() => setPosterLoadFailed(true)}
           />
         ) : (
-          <View style={[styles.posterFallback, isExternal && styles.posterExternal, { borderColor: palette.border }]}>
+          <View
+            style={[
+              styles.posterFallback,
+              isExternal && styles.posterExternal,
+              isExternal && layoutMode === 'single' && styles.posterExternalSingle,
+              { borderColor: palette.border },
+            ]}>
             <Text style={{ color: palette.textMuted }}>Постер недоступний</Text>
           </View>
         )}
@@ -200,7 +210,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   posterExternal: {
-    aspectRatio: 16 / 9,
+    aspectRatio: 21 / 9,
+    maxHeight: 180,
+  },
+  posterExternalSingle: {
+    maxHeight: 164,
   },
   posterFallback: {
     width: '100%',

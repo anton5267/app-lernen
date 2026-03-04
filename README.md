@@ -11,6 +11,7 @@ This repository contains:
 ## Quick links
 
 - Repository: `https://github.com/anton5267/app-lernen`
+- GitHub Pages (frontend): `https://anton5267.github.io/app-lernen/`
 - Issues: `https://github.com/anton5267/app-lernen/issues`
 - Real mode setup: [docs/REAL_MODE_SETUP.md](./docs/REAL_MODE_SETUP.md)
 - QA checklist: [docs/QA_CHECKLIST_V2_1.md](./docs/QA_CHECKLIST_V2_1.md)
@@ -154,6 +155,21 @@ This uses backend endpoint `POST /api/auth/demo` and unlocks favorites/upload fo
 Note: Free ngrok may show a warning page first; click continue once.  
 For Google OAuth on this public URL, add the ngrok domain to `Authorized JavaScript origins`.
 On Windows, `npm run web:export` includes a safe wrapper for a known `expo export` post-build `EPERM` process error.
+
+## GitHub Pages (frontend link like `github.io/<repo>/`)
+
+This repo includes workflow `.github/workflows/pages.yml` that deploys `my-app-2/dist` to:
+
+- `https://anton5267.github.io/app-lernen/`
+
+One-time setup in GitHub repository settings:
+
+1. `Settings -> Pages -> Build and deployment -> Source: GitHub Actions`
+2. `Settings -> Secrets and variables -> Actions -> Variables`
+   - `EXPO_PUBLIC_API_BASE_URL` = your public backend URL (for example your ngrok or server domain)
+   - `EXPO_PUBLIC_GOOGLE_CLIENT_ID` = your Google web client id
+
+Without `EXPO_PUBLIC_API_BASE_URL`, GitHub Pages will open UI but API calls will default to current origin.
 
 ### Post-push quick verification
 
