@@ -8,6 +8,13 @@ Production-ready full-stack app for movie and TV discovery with real-data search
 - Repository: `https://github.com/anton5267/app-lernen`
 - Issues: `https://github.com/anton5267/app-lernen/issues`
 
+## Community
+
+- Contributing guide: [CONTRIBUTING.md](./CONTRIBUTING.md)
+- Code of conduct: [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+- Security policy: [SECURITY.md](./SECURITY.md)
+- License: [LICENSE](./LICENSE)
+
 ## What this app provides
 
 - TMDB-powered search and browse (`Movies`, `TV`, `Mixed TMDB`)
