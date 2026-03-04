@@ -1,0 +1,29 @@
+{
+  "name": "app-lernen-backend",
+  "version": "1.0.0",
+  "description": "Backend API for movie search, auth, favorites and uploads",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "jest --runInBand --passWithNoTests"
+  },
+  "dependencies": {
+    "app-lernen-root": "file:..",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express-rate-limit": "^7.5.1",
+    "express": "^4.21.2",
+    "google-auth-library": "^10.5.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "node-cache": "^5.1.2",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.1.3"
+  }
+}

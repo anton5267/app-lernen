@@ -1,50 +1,105 @@
-# Welcome to your Expo app 👋
+# Movie Learning App (Expo Router)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Frontend for a full movie service:
 
-## Get started
+- real search via backend (`/api/search`) and TMDB proxy
+- movie detail page (`/api/movie/:id`)
+- Google login (ID token -> backend verification)
+- protected favorites collection (`/api/favorites`)
+- optional video upload (`/api/upload`)
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+- Search with debounce and pagination
+- Search types: movies / TV / mixed TMDB / YouTube / Twitch
+- Trending list when search is empty (movie/tv)
+- Search sorting (relevance / rating / A-Z)
+- Search filters (min rating / year / with poster)
+- Demo mode badge when backend runs without TMDB key
+- Clear source state banners (`Real` / `Demo`) with fallback reasons/hints
+- Movie and TV details screens with watch providers, cast and similar titles
+- Embedded player screen for YouTube/Twitch content
+- Google sign-in and server session cookie
+- Demo sign-in fallback (without Google) for local testing
+- Favorites: add/edit/delete, watched status, personal rating, notes
+- Favorites support TMDB movies + TV shows (dedupe key: mediaType + tmdbId)
+- Collection search and watch statistics
+- Theme modes (`system` / `light` / `warm` / `dark`)
+- Upload video file from collection screen
+- Favorites export/import in JSON format
+- Public share links for read-only collection view
+- Optional share-link expiration (1-365 days or no expiration)
+  - Shared page supports import to your own collection (after login)
 
-2. Start the app
+## Release Notes (v2.2)
 
-   ```bash
-   npx expo start
-   ```
+- Real/demo data mode UX was finalized for all search sources.
+- Empty query in `youtube/twitch` real mode is handled locally with clear `query required` hint (no extra backend request).
+- External web screen now shows explicit fallback text and prioritizes "Відкрити оригінал".
+- Search result cards for external sources were compacted for better visibility of primary actions.
+- Additional stability improvements: cache/read dedupe, request retry hardening, and refreshed QA scenarios.
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Scripts
 
 ```bash
-npm run reset-project
+npm run start
+npm run web
+npm run android
+npm run ios
+npm run lint
+npm run typecheck
+npm run test
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Environment
 
-## Learn more
+Create `.env` in `my-app-2`:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+EXPO_PUBLIC_API_BASE_URL=http://localhost:4000
+EXPO_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+If `EXPO_PUBLIC_API_BASE_URL` is not set, web uses `window.location.origin`.
+If it is set to `http://localhost:4000` but the app runs on a public host (for example ngrok), it auto-switches to the current origin.
 
-## Join the community
+Search UX modes:
 
-Join our community of developers creating universal apps.
+- TMDB without key -> demo catalog + explicit fallback reason
+- YouTube/Twitch without keys -> demo recommendations (including empty query)
+- YouTube/Twitch with keys + empty query -> clear `query required` hint
+- On web external screen (`/external`), if embedded playback is unsupported, user gets direct "Відкрити оригінал" path.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+In production, technical debug indicators are shown only for admin users (`user.isAdmin` from backend).
+
+## OAuth notes
+
+Web uses Google Identity Services (`@react-oauth/google`), so for local/ngrok web login configure:
+
+- `Authorized JavaScript origins`:
+  - `http://localhost:19007`
+  - your public web domain (for example ngrok URL)
+
+For native OAuth flow (Expo Auth Session), `/auth` also shows:
+
+- `Redirect URI (очікуваний)`
+- `Redirect URI (з OAuth-запиту)`
+
+Use that runtime value in Google Cloud -> OAuth Client -> `Authorized redirect URIs`.
+
+## Favorites transfer format
+
+Exported JSON contains:
+
+- `version`
+- `exportedAt`
+- `items` (array of favorite movie objects)
+
+Import accepts the same file (or plain `items` array) in merge mode.
+
+## Quality
+
+- ESLint (`expo lint`)
+- TypeScript strict mode (`tsc --noEmit`)
+- Jest tests (`jest-expo` preset)
+- GitHub Actions workflow: `.github/workflows/ci.yml`

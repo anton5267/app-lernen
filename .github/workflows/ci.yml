@@ -1,0 +1,155 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  frontend-quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: my-app-2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: my-app-2/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test -- --runInBand
+
+  backend-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend deps
+        run: npm ci --prefix backend
+
+      - name: Backend integration tests
+        run: npm --prefix backend run test
+
+      - name: Health check
+        run: |
+          nohup npm --prefix backend run start >/tmp/backend.log 2>&1 &
+          sleep 3
+          curl -f http://localhost:4000/api/health
+
+      - name: Demo search fallback
+        run: |
+          curl -s "http://localhost:4000/api/search?query=%D1%82%D0%B5%D0%BC&page=1" >/tmp/search.json
+          grep -q '"demoMode":true' /tmp/search.json
+          curl -s "http://localhost:4000/api/search?query=%D1%88%D0%B5%D1%80&type=tv&page=1" >/tmp/search-tv.json
+          grep -q '"searchType":"tv"' /tmp/search-tv.json
+          curl -s "http://localhost:4000/api/search?query=demo&type=youtube&page=1" >/tmp/search-youtube.json
+          grep -q '"searchType":"youtube"' /tmp/search-youtube.json
+          curl -s "http://localhost:4000/api/search?query=&type=youtube&page=1" >/tmp/search-youtube-empty.json
+          grep -q '"reason":"demo_recommendations"' /tmp/search-youtube-empty.json
+
+      - name: Config status endpoint
+        run: |
+          curl -s "http://localhost:4000/api/config/status" >/tmp/config-status.json
+          grep -q '"sources"' /tmp/config-status.json
+          grep -q '"tmdb"' /tmp/config-status.json
+          grep -q '"mode":"demo"' /tmp/config-status.json
+          grep -q '"google"' /tmp/config-status.json
+
+      - name: Trending endpoint
+        run: |
+          curl -s "http://localhost:4000/api/trending?page=1" >/tmp/trending.json
+          grep -q '"source":"trending"' /tmp/trending.json
+          curl -s "http://localhost:4000/api/trending?type=tv&page=1" >/tmp/trending-tv.json
+          grep -q '"searchType":"tv"' /tmp/trending-tv.json
+
+      - name: Demo auth session
+        run: |
+          curl -s -c /tmp/cookie.txt \
+            -H "Content-Type: application/json" \
+            -d '{"name":"CI"}' \
+            http://localhost:4000/api/auth/demo >/tmp/login.json
+          grep -q '"demo":true' /tmp/login.json
+          curl -s -b /tmp/cookie.txt http://localhost:4000/api/me >/tmp/me.json
+          grep -q '"email":"ci@demo.local"' /tmp/me.json
+
+      - name: Favorites import-export
+        run: |
+          curl -s -b /tmp/cookie.txt \
+            -H "Content-Type: application/json" \
+            -d '{"items":[{"tmdbId":123,"title":"CI Movie","rating":8.5,"year":"2020"}],"mode":"merge"}' \
+            http://localhost:4000/api/favorites/import >/tmp/import.json
+          grep -q '"imported":1' /tmp/import.json
+          curl -s -b /tmp/cookie.txt http://localhost:4000/api/favorites/export >/tmp/export.json
+          grep -q '"items"' /tmp/export.json
+          grep -q '"CI Movie"' /tmp/export.json
+
+      - name: Viewing history API
+        run: |
+          curl -s -b /tmp/cookie.txt \
+            -H "Content-Type: application/json" \
+            -d '{"mediaType":"movie","contentId":"27205","title":"CI Inception","year":"2010","rating":8.8}' \
+            http://localhost:4000/api/history >/tmp/history-create.json
+          grep -q '"item"' /tmp/history-create.json
+          curl -s -b /tmp/cookie.txt "http://localhost:4000/api/history?limit=10" >/tmp/history-list.json
+          grep -q '"items"' /tmp/history-list.json
+          grep -q '"CI Inception"' /tmp/history-list.json
+          curl -s -b /tmp/cookie.txt -X DELETE http://localhost:4000/api/history >/tmp/history-clear.json
+          grep -q '"cleared"' /tmp/history-clear.json
+
+      - name: Share link API
+        run: |
+          curl -s -b /tmp/cookie.txt \
+            -H "Content-Type: application/json" \
+            -d '{"title":"CI Share","expiresInDays":7}' \
+            http://localhost:4000/api/favorites/share >/tmp/share.json
+          TOKEN=$(node -e "const fs=require('fs');const x=JSON.parse(fs.readFileSync('/tmp/share.json','utf8'));process.stdout.write(x.item?.token || '')")
+          test -n "$TOKEN"
+          grep -q '"expiresAt"' /tmp/share.json
+          curl -s "http://localhost:4000/api/share/$TOKEN" >/tmp/public-share.json
+          grep -q '"ownerName"' /tmp/public-share.json
+          grep -q '"items"' /tmp/public-share.json
+
+      - name: Share expiration validation
+        run: |
+          STATUS=$(curl -s -o /tmp/share-expire-invalid.json -w "%{http_code}" \
+            -b /tmp/cookie.txt \
+            -H "Content-Type: application/json" \
+            -d '{"title":"Bad Share","expiresInDays":999}' \
+            http://localhost:4000/api/favorites/share)
+          test "$STATUS" = "400"
+          grep -q 'expiresInDays' /tmp/share-expire-invalid.json
+
+      - name: Upload validation
+        run: |
+          STATUS=$(curl -s -o /tmp/upload.json -w "%{http_code}" \
+            -b /tmp/cookie.txt \
+            -F "file=@README.md;type=text/plain" \
+            http://localhost:4000/api/upload)
+          test "$STATUS" = "400"
+          grep -q 'Unsupported file type' /tmp/upload.json

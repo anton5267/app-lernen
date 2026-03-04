@@ -1,10 +1,28 @@
 {
-  "name": "untitled",
+  "name": "app-lernen-root",
   "version": "1.0.0",
-  "description": "",
+  "description": "Root scripts for the Expo app inside my-app-2",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "npm --prefix my-app-2 install && npm --prefix backend install",
+    "setup:web": "npm --prefix my-app-2 install",
+    "setup:backend": "npm --prefix backend install",
+    "start": "npm --prefix my-app-2 run start",
+    "web": "npm --prefix my-app-2 run web",
+    "web:export": "npm --prefix my-app-2 run export:web",
+    "android": "npm --prefix my-app-2 run android",
+    "ios": "npm --prefix my-app-2 run ios",
+    "backend": "npm --prefix backend run dev",
+    "backend:start": "npm --prefix backend run start",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f movie-service",
+    "lint": "npm --prefix my-app-2 run lint",
+    "typecheck": "npm --prefix my-app-2 run typecheck",
+    "test": "npm --prefix my-app-2 run test",
+    "test:backend": "npm --prefix backend run test",
+    "test:all": "npm --prefix my-app-2 run test && npm --prefix backend run test"
   },
   "private": true
 }

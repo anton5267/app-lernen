@@ -1,0 +1,19 @@
+services:
+  movie-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        EXPO_PUBLIC_GOOGLE_CLIENT_ID: ${EXPO_PUBLIC_GOOGLE_CLIENT_ID:-}
+        EXPO_PUBLIC_API_BASE_URL: ${EXPO_PUBLIC_API_BASE_URL:-}
+    env_file:
+      - backend/.env
+    environment:
+      NODE_ENV: production
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:4000}
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./backend/data:/app/backend/data
+      - ./backend/uploads:/app/backend/uploads
+    restart: unless-stopped

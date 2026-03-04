@@ -1,0 +1,7 @@
+backend.out.log
+backend.err.log
+backend/.env
+my-app-2/.env
+.env
+.tmp_share_token.txt
+*.log
