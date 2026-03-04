@@ -8,6 +8,15 @@ This repository contains:
 - `docs/QA_CHECKLIST_V2_1.md`: QA checklist for demo/real/admin scenarios
 - `docs/ARCHITECTURE.md`: backend/frontend module map and extension pattern
 
+## Quick links
+
+- Repository: `https://github.com/anton5267/app-lernen`
+- Issues: `https://github.com/anton5267/app-lernen/issues`
+- Real mode setup: [docs/REAL_MODE_SETUP.md](./docs/REAL_MODE_SETUP.md)
+- QA checklist: [docs/QA_CHECKLIST_V2_1.md](./docs/QA_CHECKLIST_V2_1.md)
+- One-link deploy checklist: [docs/ONE_LINK_DEPLOY_CHECKLIST.md](./docs/ONE_LINK_DEPLOY_CHECKLIST.md)
+- Release post template (UA): [docs/RELEASE_POST_TEMPLATE_UA.md](./docs/RELEASE_POST_TEMPLATE_UA.md)
+
 ## Quick start
 
 From the repository root:
@@ -145,6 +154,18 @@ This uses backend endpoint `POST /api/auth/demo` and unlocks favorites/upload fo
 Note: Free ngrok may show a warning page first; click continue once.  
 For Google OAuth on this public URL, add the ngrok domain to `Authorized JavaScript origins`.
 On Windows, `npm run web:export` includes a safe wrapper for a known `expo export` post-build `EPERM` process error.
+
+### Post-push quick verification
+
+After every push to `master`, verify:
+
+1. `https://github.com/anton5267/app-lernen` opens and README renders correctly.
+2. `npm run test:all` is green locally.
+3. single-port mode still works:
+   - `npm run web:export`
+   - `npm run backend:start`
+   - `http://localhost:4000/api/health`
+   - `http://localhost:4000/api/config/status`
 
 ## Docker Compose
 
