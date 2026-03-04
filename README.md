@@ -1,22 +1,31 @@
-# app-lernen
+# Movie Finder (app-lernen)
 
-This repository contains:
+Production-ready full-stack app for movie and TV discovery with real-data search, personal collection management, and shareable lists.
+
+## Live links
+
+- Web app (GitHub Pages): `https://anton5267.github.io/app-lernen/`
+- Repository: `https://github.com/anton5267/app-lernen`
+- Issues: `https://github.com/anton5267/app-lernen/issues`
+
+## What this app provides
+
+- TMDB-powered search and browse (`Movies`, `TV`, `Mixed TMDB`)
+- YouTube and Twitch search tabs with web-safe external fallback
+- Google OAuth + demo auth mode
+- Personal collection (favorites, status, rating, notes)
+- Import/export JSON and share links with expiration
+- Source-mode transparency (`real` / `demo`) and safe fallback hints
+
+## Repository structure
 
 - `my-app-2/`: Expo Router frontend
 - `backend/`: Express API (TMDB proxy, Google auth, favorites, upload, import/export)
 - `docs/REAL_MODE_SETUP.md`: real-data setup runbook
 - `docs/QA_CHECKLIST_V2_1.md`: QA checklist for demo/real/admin scenarios
 - `docs/ARCHITECTURE.md`: backend/frontend module map and extension pattern
-
-## Quick links
-
-- Repository: `https://github.com/anton5267/app-lernen`
-- GitHub Pages (frontend): `https://anton5267.github.io/app-lernen/`
-- Issues: `https://github.com/anton5267/app-lernen/issues`
-- Real mode setup: [docs/REAL_MODE_SETUP.md](./docs/REAL_MODE_SETUP.md)
-- QA checklist: [docs/QA_CHECKLIST_V2_1.md](./docs/QA_CHECKLIST_V2_1.md)
-- One-link deploy checklist: [docs/ONE_LINK_DEPLOY_CHECKLIST.md](./docs/ONE_LINK_DEPLOY_CHECKLIST.md)
-- Release post template (UA): [docs/RELEASE_POST_TEMPLATE_UA.md](./docs/RELEASE_POST_TEMPLATE_UA.md)
+- `docs/ONE_LINK_DEPLOY_CHECKLIST.md`: single-link deploy flow
+- `docs/RELEASE_POST_TEMPLATE_UA.md`: release post template
 
 ## Quick start
 
